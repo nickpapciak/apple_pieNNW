@@ -9,6 +9,6 @@ if __name__ == '__main__':
     probing_data = images[50_000:]
     probing_truths = labels[50_000:]
 
-    nn = Network([784, 16, 16, 10], data=training_data, truth=training_truths)
+    nn = Network([784, 50, 50, 10], data=training_data, truth=training_truths)
 
-    nn.train(epochs=100, batch_size=30, learning_rate=0.5, probe_data=probing_data, probe_truth=probing_truths)
+    nn.train(epochs=100, batch_size=15, learning_rate=0.5, probe_data=probing_data, probe_truth=probing_truths)

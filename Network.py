@@ -78,7 +78,7 @@ class Network:
             self.activations[l + 1] = self.activation_function(self.weights[l] @ self.activations[l] + self.biases[l])
 
     def _backprop(self, data, truth): 
-        """Propogrates backwrds through the network to find gradients."""
+        """Propogrates backwards through the network to find gradients."""
         # forward propogation
         self._forwardprop(data)
 
@@ -145,9 +145,9 @@ class Network:
         return self.activations[-1]
 
     def evaluate(self, batch_data, batch_truth):
-        """The number of correct evaluations from a batch of data"""
+        """The number of correct evaluations from a batch of data."""
         return sum([np.argmax(self.classify(d)) == np.argmax(t) for d, t in zip(batch_data, batch_truth)])
 
     def cost(self, data, expected): 
-        """The current network cost from a batch of data"""
+        """The current network cost from a batch of data."""
         return self.cost_function(self.classify(data), expected)
