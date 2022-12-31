@@ -11,4 +11,4 @@ if __name__ == '__main__':
 
     nn = Network([784, 50, 50, 10], data=training_data, truth=training_truths)
 
-    nn.train(epochs=100, batch_size=15, learning_rate=0.5, probe_data=probing_data, probe_truth=probing_truths)
+    nn.train(epochs=100, batch_size=10, learning_rate=5, probe_data=probing_data, probe_truth=probing_truths)

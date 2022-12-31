@@ -4,6 +4,9 @@ import random
 # TODO: use python typing to do actual types 
 # TODO: implement momentum
 # TODO: make output look nicer like keras https://www.tensorflow.org/tutorials/keras/classification
+# TODO: make output optional 
+# TODO: make shape a prop so when u set it it reinitializes stuff
+# TODO: different activations, ReLU, LReLU
 
 # assorted functions
 def sigmoid(x): 
