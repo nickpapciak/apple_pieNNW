@@ -23,11 +23,3 @@ with open('data/MNIST/imgs','rb') as f:
     images = list(f.read())[:NUM_IMGS*IMG_SIZE**2]
     images = np.reshape(images, (NUM_IMGS, IMG_SIZE**2, 1))
     images = images / 255
-
-# for testing
-# displays an image from an image vector
-# def show_img(img):
-#     from matplotlib import pyplot as plt
-#     plt.imshow(np.reshape(img, (IMG_SIZE, IMG_SIZE)))
-#     plt.show()
-

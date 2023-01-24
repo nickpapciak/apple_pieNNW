@@ -6,12 +6,10 @@ import numpy as np
 
 # TODO: use python typing to do actual types 
 # TODO: implement momentum
-# TODO: make output look nicer like keras https://www.tensorflow.org/tutorials/keras/classification
-# TODO: make output optional 
-# TODO: make shape a prop so when u set it it reinitializes stuff
 # TODO: different activations, ReLU, LReLU
+# TODO: mess with random initialization of weights and biases, how does it affect? 
 
-# assorted functions
+# assorted activation functions
 def sigmoid(x: np.ndarray): 
     """Sigmoid"""
     return 1 / (1 + np.exp(-x))
@@ -28,7 +26,7 @@ def d_ReLU(x: np.ndarray):
     """Derivative of Rectified Linear Unit"""
     return 1 * (x > 0)
 
-
+# assorted cost functions
 def mse(expected: np.ndarray, actual: np.ndarray): 
     """Mean Squared Error"""
     return 0.5*np.linalg.norm(expected - actual)**2
@@ -49,8 +47,8 @@ class Network:
                 probe_training: np.ndarray=None, 
                 probe_labels: np.ndarray=None, 
                 suppress_print=False, 
-                activation=sigmoid, 
-                d_activation=d_sigmoid, 
+                activation=ReLU, 
+                d_activation=d_ReLU, 
                 cost=mse, d_cost=d_mse): 
         """Initializes a new network."""
         if len(shape) < 2: 
@@ -66,6 +64,7 @@ class Network:
             labels.shape[2] == 1,
             training.shape[0] == labels.shape[0]
             ]
+
         if not all(conditions): 
             raise ValueError(
                 "Input data and expected outputs should be 3 dimensional ndarrays \
@@ -91,10 +90,10 @@ class Network:
         self.biases = [None] * len(self)
         self.activations = [None] * (len(self) + 1)
 
-        # setting random weights & biases [-0.5, 0.5)
+        # setting random weights & biases [-0.1, 0.1)
         for i in range(len(self)): 
-            self.weights[i] = np.random.rand(shape[i + 1], shape[i]) - 0.5
-            self.biases[i] = np.random.rand(shape[i + 1], 1) - 0.5
+            self.weights[i] = np.random.uniform(-0.1,0.1, size=(shape[i + 1], shape[i]))
+            self.biases[i] = np.random.uniform(-0.1,0.1, size= (shape[i + 1], 1))
 
     def __len__(self): 
         """Number of layers in the network."""
@@ -149,7 +148,6 @@ class Network:
         self.weights = [w - k*mgw for w, mgw in zip(self.weights, sum_grad_weights)]
         self.biases = [b - k*mgb for b, mgb in zip(self.biases, sum_grad_biases)]
 
-
     def train(self, epochs, batch_size, learning_rate):
         """Uses stochastic gradient descent to train the network"""
         if (batch_size > len(self.data)): 
@@ -167,11 +165,9 @@ class Network:
             if not self.suppress_print: 
                 print(self._summarize(epoch, epochs))
 
-
-
     def _summarize(self, epoch, total_epochs): 
         """Gives a string representation of an epoch"""
-        if self.probe is None: 
+        if self.probe is None: # checks for probing data
             return f"Epoch {epoch}/{total_epochs}"
         return f"epoch {epoch}/{total_epochs} - accuracy: {self.accuracy(self.probe):.2f}% - loss: {self.loss():.2f}"
 
@@ -180,13 +176,14 @@ class Network:
         self._forwardprop(datapoint)
         return self.activations[-1]
 
-    def accuracy(self, data: list[TrainingData]):
+    def accuracy(self, data: list[TrainingData] = None):
         """The percentage of correct evaluations from a batch of data."""
+        # defaults to testing its accuracy on its own training data
+        data = data or self.data 
         correct = [np.argmax(self.classify(d.training)) == np.argmax(d.label) for d in data]
         return  100*np.average(correct)
 
-
     def loss(self): 
-        """The average cost from a batch of data."""
-        return np.average([self.cost(self.classify(d.training), d.label) for d in self.data])
+        """A way of assigning a value to the error of the network data."""
+        return np.sum([self.cost(self.classify(d.training), d.label) for d in self.data])
  
