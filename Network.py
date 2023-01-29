@@ -4,10 +4,13 @@ import random
 
 import numpy as np 
 
-# TODO: use python typing to do actual types 
+# TODO: more type hinting
 # TODO: implement momentum
-# TODO: different activations, ReLU, LReLU
+# TODO: LReLU
 # TODO: mess with random initialization of weights and biases, how does it affect? 
+# TODO: have the data not be a part of the network, so you can train with different batches of data
+# just have it be inputs to functions that call it
+# TODO: redo batch train
 
 # assorted activation functions
 def sigmoid(x: np.ndarray): 
@@ -46,11 +49,11 @@ class Network:
                 labels: np.ndarray, 
                 probe_training: np.ndarray=None, 
                 probe_labels: np.ndarray=None, 
-                suppress_print=False, 
                 activation=ReLU, 
                 d_activation=d_ReLU, 
                 cost=mse, d_cost=d_mse): 
         """Initializes a new network."""
+
         if len(shape) < 2: 
             raise ValueError("Network needs at least 2 layers")
 
@@ -78,7 +81,6 @@ class Network:
             self.probe = [TrainingData(t, l) for t, l in zip(probe_training, probe_labels)]
 
         self.shape : list[int] = shape
-        self.suppress_print : bool = suppress_print
         self.activation : Callable = activation
         self.d_activation : Callable = d_activation
         self.cost : Callable = cost
@@ -148,7 +150,7 @@ class Network:
         self.weights = [w - k*mgw for w, mgw in zip(self.weights, sum_grad_weights)]
         self.biases = [b - k*mgb for b, mgb in zip(self.biases, sum_grad_biases)]
 
-    def train(self, epochs, batch_size, learning_rate):
+    def train(self, epochs, batch_size, learning_rate, suppress_print = False):
         """Uses stochastic gradient descent to train the network"""
         if (batch_size > len(self.data)): 
             raise ValueError("Batch size too large")
@@ -162,7 +164,7 @@ class Network:
             for i in range(0, len(shuffled_data), batch_size): 
                 self._train_batch(shuffled_data[i:i+batch_size], learning_rate)
 
-            if not self.suppress_print: 
+            if not suppress_print: 
                 print(self._summarize(epoch, epochs))
 
     def _summarize(self, epoch, total_epochs): 
