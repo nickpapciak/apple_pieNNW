@@ -59,7 +59,7 @@ for i in range(30, 35):
     plt.imshow(np.reshape(img, (28, 28)))
     plt.show()
 
-    print("Digit is:", np.argmax(nn.classify(training[i])))
+    print("Digit is:", np.argmax(nn.classify(img)))
     print("\n\n")
 ```
 
